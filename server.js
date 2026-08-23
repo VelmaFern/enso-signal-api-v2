@@ -48,7 +48,7 @@ app.use(
               roni_anomaly: { type: "number" },
               oni_anomaly: { type: "number" },
               latest_weekly_nino34_anomaly: { type: "number" },
-              latest_weekly_date: { type: "string" },
+              latest_weekly_month: { type: "string" },
               strength: { type: "string" },
               strength_score: { type: "number", minimum: 0, maximum: 100 },
               trajectory: { type: "string", enum: ["strengthening", "weakening", "steady"] },
