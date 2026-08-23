@@ -5,6 +5,7 @@
 require("dotenv").config();
 const express = require("express");
 const { paymentMiddleware } = require("x402-express");
+const { facilitator } = require("@coinbase/x402"); // CDP's official facilitator - required for real mainnet settlement
 const { getEnsoSignal } = require("./lib/enso");
 
 const app = express();
@@ -15,6 +16,16 @@ const NETWORK = process.env.X402_NETWORK || "base"; // "base-sepolia" for testne
 
 if (!RECEIVER_ADDRESS) {
   console.warn("WARNING: RECEIVER_ADDRESS env var is not set. Payments cannot be received.");
+}
+
+// The public x402.org facilitator only supports testnet. For real mainnet USDC
+// settlement (and Bazaar listing), the CDP facilitator is required. It reads
+// CDP_API_KEY_ID / CDP_API_KEY_SECRET from the environment automatically.
+if (NETWORK === "base" && (!process.env.CDP_API_KEY_ID || !process.env.CDP_API_KEY_SECRET)) {
+  console.warn(
+    "WARNING: X402_NETWORK is 'base' (mainnet) but CDP_API_KEY_ID/CDP_API_KEY_SECRET are not set. " +
+      "Real payments will not verify/settle without them."
+  );
 }
 
 app.use(
@@ -52,7 +63,7 @@ app.use(
         },
       },
     },
-    { url: process.env.FACILITATOR_URL || "https://x402.org/facilitator" }
+    NETWORK === "base" ? facilitator : { url: "https://x402.org/facilitator" }
   )
 );
 
