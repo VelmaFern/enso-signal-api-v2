@@ -36,8 +36,10 @@ app.use(
         price: PRICE,
         network: NETWORK,
         config: {
+          name: "ENSO Signal API",
           description:
             "Live ENSO (El Nino/La Nina) status, strength, trend, empirical persistence odds, and sector impact scores (agriculture, supply chain, insurance, energy), synthesized from NOAA CPC RONI/ONI records",
+          discoverable: true,
           outputSchema: {
             type: "object",
             properties: {
