@@ -37,7 +37,7 @@ app.use(
         network: NETWORK,
         config: {
           description:
-            "Live ENSO (El Nino/La Nina) status, strength, trend, empirical persistence odds, and sector impact scores (agriculture, supply chain, insurance, energy), synthesized from NOAA CPC RONI/ONI records.",
+            "Live ENSO (El Nino/La Nina) status, strength, trend, empirical persistence odds, and sector impact scores (agriculture, supply chain, insurance, energy), synthesized from NOAA CPC RONI/ONI records",
           outputSchema: {
             type: "object",
             properties: {
