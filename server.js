@@ -109,6 +109,13 @@ app.get("/enso", async (req, res) => {
   }
 });
 
+app.get("/.well-known/x402", (req, res) => {
+  res.json({
+    version: 1,
+    resources: ["https://enso-signal-api-v2.vercel.app/enso"],
+  });
+});
+
 app.get("/", (req, res) => {
   res.json({
     name: "ENSO Signal API",
