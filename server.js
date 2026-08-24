@@ -16,6 +16,7 @@ const { facilitator } = require("@coinbase/x402"); // CDP's official facilitator
 const { getEnsoSignal } = require("./lib/enso");
 
 const app = express();
+
 // This is a live-data API - nothing here should ever be cached by a CDN,
 // browser, or scanner. Also works around observed stale-edge-cache behavior
 // on this deployment.
@@ -114,6 +115,46 @@ app.get("/enso", async (req, res) => {
     console.error("ENSO signal computation failed:", err);
     res.status(502).json({ error: "upstream_data_unavailable", detail: String(err.message || err) });
   }
+});
+
+const openApiSpec = {
+  openapi: "3.1.0",
+  info: {
+    title: "ENSO Signal API",
+    version: "2.0.0",
+    description:
+      "Live ENSO (El Nino/La Nina) status, strength, trend, empirical persistence odds, and sector impact scores, synthesized from NOAA CPC RONI/ONI records.",
+    "x-guidance":
+      "Use GET /enso to retrieve the current ENSO status. Takes no parameters. Returns enso_status (el_nino/la_nina/neutral), strength, strength_score, trajectory, empirical persistence odds, a historical analog, and computed sector impact scores for agriculture, supply chain, insurance, and energy.",
+  },
+  paths: {
+    "/enso": {
+      get: {
+        operationId: "getEnsoSignal",
+        summary: "Get live ENSO (El Nino/La Nina) status and sector impact scores",
+        tags: ["Climate"],
+        "x-payment-info": {
+          price: { mode: "fixed", currency: "USD", amount: PRICE.replace("$", "") },
+          protocols: [{ x402: {} }],
+        },
+        responses: {
+          "200": {
+            description: "Current ENSO signal data",
+            content: {
+              "application/json": {
+                schema: ensoOutputSchema,
+              },
+            },
+          },
+          "402": { description: "Payment Required" },
+        },
+      },
+    },
+  },
+};
+
+app.get("/openapi.json", (req, res) => {
+  res.json(openApiSpec);
 });
 
 app.get("/.well-known/x402", (req, res) => {
