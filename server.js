@@ -16,6 +16,13 @@ const { facilitator } = require("@coinbase/x402"); // CDP's official facilitator
 const { getEnsoSignal } = require("./lib/enso");
 
 const app = express();
+// This is a live-data API - nothing here should ever be cached by a CDN,
+// browser, or scanner. Also works around observed stale-edge-cache behavior
+// on this deployment.
+app.use((req, res, next) => {
+  res.set("Cache-Control", "no-store, no-cache, must-revalidate");
+  next();
+});
 
 const RECEIVER_ADDRESS = process.env.RECEIVER_ADDRESS; // your payout wallet (Base mainnet)
 const PRICE = process.env.PRICE_USD || "$0.02";
