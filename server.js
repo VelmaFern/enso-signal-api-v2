@@ -17,6 +17,10 @@ const { getEnsoSignal } = require("./lib/enso");
 
 const app = express();
 
+// Vercel terminates TLS at its edge; trust the proxy so payment requirements
+// advertise the resource as https:// instead of http://.
+app.set("trust proxy", true);
+
 // This is a live-data API - nothing here should ever be cached by a CDN,
 // browser, or scanner. Also works around observed stale-edge-cache behavior
 // on this deployment.
@@ -52,7 +56,7 @@ const resourceServer = new x402ResourceServer(facilitatorClient).register(
 const ensoOutputSchema = {
   type: "object",
   properties: {
-    generated_at: { type: "string", format: "date-time" },
+    generated_at: { type: "string", description: "ISO 8601 timestamp" },
     enso_status: { type: "string", enum: ["el_nino", "la_nina", "neutral"] },
     alert_level: { type: "string" },
     current_season: { type: "string" },
