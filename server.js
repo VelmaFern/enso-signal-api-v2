@@ -13,6 +13,7 @@ const { x402ResourceServer, HTTPFacilitatorClient } = require("@x402/core/server
 const { ExactEvmScheme } = require("@x402/evm/exact/server");
 const { declareDiscoveryExtension } = require("@x402/extensions/bazaar");
 const { facilitator } = require("@coinbase/x402"); // CDP's official facilitator config
+const { createPaywall, evmPaywall } = require("@x402/paywall");
 const { getEnsoSignal } = require("./lib/enso");
 
 const app = express();
@@ -52,6 +53,13 @@ const resourceServer = new x402ResourceServer(facilitatorClient).register(
   CAIP2_NETWORK,
   new ExactEvmScheme()
 );
+
+// Browser paywall: lets a person connect a wallet and pay from the page.
+// testnet must be false for Base mainnet (the library defaults to testnet).
+const paywall = createPaywall()
+  .withNetwork(evmPaywall)
+  .withConfig({ appName: "ENSO Signal API", testnet: CAIP2_NETWORK !== "eip155:8453" })
+  .build();
 
 const ensoOutputSchema = {
   type: "object",
@@ -107,7 +115,9 @@ app.use(
         },
       },
     },
-    resourceServer
+    resourceServer,
+    undefined,
+    paywall
   )
 );
 
