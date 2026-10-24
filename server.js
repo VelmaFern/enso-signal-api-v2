@@ -136,6 +136,7 @@ const openApiSpec = {
   info: {
     title: "ENSO Signal API",
     version: "2.0.0",
+    contact: { email: "velmaferndesigncompany@gmail.com" },
     description:
       "Live ENSO (El Nino/La Nina) status, strength, trend, empirical persistence odds, and sector impact scores, synthesized from NOAA CPC RONI/ONI records.",
     "x-guidance":
